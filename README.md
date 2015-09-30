@@ -11,6 +11,7 @@ A helper module for AngularUI Router, which allows you to handle redirect chains
 3. Add a dependency on `ui.router.redirect` in your app module.
 
 ## Usage
+
 ``` javascript
 angular.module('myApp', [ 'ui.router', 'ui.router.redirect' ])
 .config(function($redirectProvider){
@@ -83,6 +84,7 @@ angular.module('myApp', [ 'ui.router', 'ui.router.redirect' ])
 ```
 
 ## $redirectProvider
+
 ### otherwise(callback)
 The callback will be called if the redirection was rejected
 * callback($injector, route, result) {function} 
@@ -96,9 +98,11 @@ Debug the redirections in the console
 * debug {boolean}
 
 ## $redirect
+
 ## add(callback):
 The callback will be called recursively
 * callback(route) {function}
+
 ### callback return:
 * Basic option: false {boolean}: Deny the change
 * Basic option: true {boolean}: Approve the change
@@ -109,11 +113,15 @@ The callback will be called recursively
 * Promise {object}
     * Resolve with a basic option
     * Reject will deny the change
+
 ## set(key, value)
 Store anything to reuse it later - it is useful to store promises that you can reuse in the ui-router resolve object
+
 ## get(key)
 Return the stored object
 
 ## Events
+
 ### $redirectStart
+
 ### $redirectNotFound
