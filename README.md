@@ -83,26 +83,32 @@ angular.module('myApp', [ 'ui.router', 'ui.router.redirect' ])
 ```
 
 ## $redirectProvider
-### otherwise(callback): The callback will be called if the redirection was rejected
- * callback($injector, route, result) {function} 
-### notFound(callback): The callback will be called if the target was not found
- * callback($injector, route) {function} 
-### setDebug(debug): Debug the redirections in the console
- * debug {boolean}
+### otherwise(callback)
+The callback will be called if the redirection was rejected
+* callback($injector, route, result) {function} 
+
+### notFound(callback)
+The callback will be called if the target was not found
+* callback($injector, route) {function} 
+
+### setDebug(debug)
+Debug the redirections in the console
+* debug {boolean}
 
 ## $redirect
-## add(callback): The callback will be called recursively
- * callback(route) {function}
+## add(callback):
+The callback will be called recursively
+* callback(route) {function}
 ### callback return:
- * Basic option: false {boolean}: Deny the change
- * Basic option: true {boolean}: Approve the change
- * Basic option: route {object}: Redirect to
-     * name {string} (required): ui-router state name
-     * params {object}: ui-router state params
-     * options {object}: ui-router state options
- * Promise {object}
-     * Resolve with a basic option
-     * Reject will deny the change
+* Basic option: false {boolean}: Deny the change
+* Basic option: true {boolean}: Approve the change
+* Basic option: route {object}: Redirect to
+    * name {string} (required): ui-router state name
+    * params {object}: ui-router state params
+    * options {object}: ui-router state options
+* Promise {object}
+    * Resolve with a basic option
+    * Reject will deny the change
 ## set(key, value)
 Store anything to reuse it later - it is useful to store promises that you can reuse in the ui-router resolve object
 ## get(key)
