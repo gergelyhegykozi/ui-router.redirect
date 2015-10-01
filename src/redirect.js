@@ -8,7 +8,8 @@
   angular.module('ui.router.redirect', ['ui.router'])
   .provider('$redirect', redirectProvider);
 
-  function redirectProvider() {
+  redirectProvider.$inject = ['$urlRouterProvider'];
+  function redirectProvider($urlRouterProvider) {
 
     var otherwiseCallback = angular.noop,
         notFoundCallback = angular.noop,
@@ -37,6 +38,7 @@
      */
     function notFound(callback) {
       notFoundCallback = callback;
+      $urlRouterProvider.otherwise(callback);
     }
 
     /**
@@ -228,7 +230,7 @@
                   deferred.resolve(handle(route, _result));
                 }, function(_result) {
                   $timeout(function() {
-                    otherwiseCallback($injector, route, _result);
+                    otherwiseCallback($injector);
                   });
                   deferred.reject(); 
                 });
@@ -244,7 +246,7 @@
               } else if(!result) {
                 reset();
                 $timeout(function() {
-                  otherwiseCallback($injector, route, result);
+                  otherwiseCallback($injector);
                 });
                 return false;
               //Wrong format
@@ -277,7 +279,7 @@
           $rootScope.$broadcast('$redirectNotFound', route);
         }
         if(!stateFound && notFoundCallback !== angular.noop) {
-          notFoundCallback($injector, route);
+          notFoundCallback($injector);
         } else {
           redirectAccepted = true;
           $state.go(route.name, route.params, route.options);

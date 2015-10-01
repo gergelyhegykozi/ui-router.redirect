@@ -16,11 +16,11 @@ A helper module for AngularUI Router, which allows you to handle redirect chains
 angular.module('myApp', [ 'ui.router', 'ui.router.redirect' ])
 .config(function($redirectProvider){
     $redirectProvider.setDebug(true);
-    $redirectProvider.otherwise(function($injector, route, result) {
+    $redirectProvider.otherwise(function($injector) {
         var $state = $injector.get('$state');
         $state.go('pageRejected', {}, { location: false });
     });
-    $redirectProvider.notFound(function($injector, route, result) {
+    $redirectProvider.notFound(function($injector) {
         var $state = $injector.get('$state');
         $state.go('pageNotFound', {}, { location: false });
     });
