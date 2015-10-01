@@ -87,11 +87,11 @@ angular.module('myApp', [ 'ui.router', 'ui.router.redirect' ])
 
 ### otherwise(callback)
 The callback will be called if the redirection was rejected
-* callback($injector, route, result) {function} 
+* callback($injector) {function} 
 
 ### notFound(callback)
 The callback will be called if the target was not found
-* callback($injector, route) {function} 
+* callback($injector) {function} 
 
 ### setDebug(debug)
 Debug the redirections in the console
