@@ -2,7 +2,7 @@
 A helper module for AngularUI Router, which allows you to handle redirect chains.
 
 ## Features
-* Handle the routing's logic / requirements separately before it reaches the routing
+* Handle the page conditions / requirements separately before it reaches the routing
 * Handle the rejected(otherwise) and notFound states separately
 
 ## Installation
