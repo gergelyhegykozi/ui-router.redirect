@@ -60,6 +60,12 @@
             _go: go,
             set: set,
             get: get
+          },
+          defaultOptions = {
+            inherit: true,
+            location: true,
+            notify: true,
+            reload: false
           };
 
       $rootScope.$on('$stateChangeStart', stateChangeStart);
@@ -75,13 +81,14 @@
           event.preventDefault();
           $rootScope.$broadcast('$redirectStart', toState, toParams);
           if(options) {
+            //Handle history
+            options.location = options.relative ? options.location : true;
             delete options.$retry;
             delete options.relative;
           }
           go({
             name: toState.name,
             params: toParams,
-            //Fallback for older versions
             options: options || {}
           });
         }
@@ -292,6 +299,7 @@
               }
             };
 
+        route.options = angular.extend({}, defaultOptions, route.options);
         return check(route);
       }
 
