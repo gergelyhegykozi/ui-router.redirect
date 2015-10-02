@@ -74,6 +74,10 @@
         if(!redirectAccepted) {
           event.preventDefault();
           $rootScope.$broadcast('$redirectStart', toState, toParams);
+          if(options) {
+            delete options.$retry;
+            delete options.relative;
+          }
           go({
             name: toState.name,
             params: toParams,
