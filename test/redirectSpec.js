@@ -142,5 +142,36 @@ describe('redirect', function () {
     expect(spy).toHaveBeenCalled();
   }));
 
+  it('should handle simple condition', inject(function($state, $stateParams, $rootScope, $redirect) {
+    $redirect.add('home', function(route) {
+      return {
+          name: 'home.item',
+          params: {
+              id: 1
+          }
+      };
+    });
+    expect(function() {
+      $state.go('home');
+      $rootScope.$digest();
+    }).not.toThrow();
+    expect($state.current.name).toBe('home.item');
+  }));
+
+  it('should handle regexp based condition', inject(function($state, $stateParams, $rootScope, $redirect) {
+    $redirect.add('home.*', function(route) {
+      return {
+          name: 'home.item',
+          params: {
+              id: 1
+          }
+      };
+    });
+    expect(function() {
+      $state.go('home');
+      $rootScope.$digest();
+    }).toThrow(new Error('Infinite redirect loop'));
+  }));
+
 });
 
