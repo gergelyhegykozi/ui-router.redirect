@@ -1,6 +1,6 @@
 {
   "name": "angular-ui-router.redirect",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A helper module for AngularUI Router, which allows you to handle redirect chains",
   "main": "dist/ui-router.redirect.js",
   "license": "MIT",

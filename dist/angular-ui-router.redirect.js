@@ -60,6 +60,12 @@
             _go: go,
             set: set,
             get: get
+          },
+          defaultOptions = {
+            inherit: true,
+            location: true,
+            notify: true,
+            reload: false
           };
 
       $rootScope.$on('$stateChangeStart', stateChangeStart);
@@ -74,10 +80,15 @@
         if(!redirectAccepted) {
           event.preventDefault();
           $rootScope.$broadcast('$redirectStart', toState, toParams);
+          if(options) {
+            //Handle history
+            options.location = options.relative ? options.location : true;
+            delete options.$retry;
+            delete options.relative;
+          }
           go({
             name: toState.name,
             params: toParams,
-            //Fallback for older versions
             options: options || {}
           });
         }
@@ -98,8 +109,30 @@
        *    Resolve with a basic option
        *    Reject: Deny the change
        */
-      function add(callback) {
-        callbackQueue.push(callback);
+      function add() {
+        var callback = angular.noop,
+            condition = '';
+
+        if(arguments.length === 1) {
+          callback = arguments[0];
+        } else if(arguments.length === 2) {
+          condition = arguments[0];
+          callback = arguments[1];
+        }
+
+        if(!angular.isString(condition)) {
+            throw new Error('Condition should be string');
+        }
+
+        if(!angular.isFunction(callback)) {
+            throw new Error('Callback should be function');
+        }
+
+        callbackQueue.push({
+          condition: condition,
+          callback: callback
+        });
+
         return this;
       }
 
@@ -218,7 +251,18 @@
                 addToRedirectQueue(route);
               }
 
-              result = callbackQueue[i].call(redirectScope, route);
+              var condition = callbackQueue[i].condition,
+                  callback = callbackQueue[i].callback;
+
+              if(
+                !condition ||
+                new RegExp('^' + condition + '$').test(route.name)
+              ) {
+                result = callback.call(redirectScope, route);
+              } else {
+                //Approved - next callback
+                result = true;
+              }
 
               return handle(route, result);
             },
@@ -255,6 +299,7 @@
               }
             };
 
+        route.options = angular.extend({}, defaultOptions, route.options);
         return check(route);
       }
 
