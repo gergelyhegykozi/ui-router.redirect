@@ -5,6 +5,11 @@ A helper module for AngularUI Router, which allows you to handle redirect chains
 * Handle the page conditions / requirements separately before it reaches the routing
 * Handle the rejected(otherwise) and notFound states separately
 
+## Important note
+The module doesn't handle state options with the official 0.2.15
+With that commit you can fix that:
+https://github.com/angular-ui/ui-router/pull/2212
+
 ## Installation
 1. `bower install angular-ui-router.redirect`
 2. Reference `dist/angular-ui-router.redirect.min.js`.
@@ -27,46 +32,36 @@ angular.module('myApp', [ 'ui.router', 'ui.router.redirect' ])
 })
 .run(function($redirect, $q, authService) {
     $redirect
-    .add(home)
-    .add(admin);
+    .add('home', home)
+    //Catch every state in admin
+    .add('admin.*', admin);
 
     function home(route) {
-        //The target is the home route
-        if(route.name === 'home') {
-            //Redirect to the home.main state
-            return {
-                name: 'home.main',
-                params: route.params
-            };
-        //In any other case we dont care in this block and approve the change
-        } else {
-            return true;
-        }
+        //Redirect to the home.main state
+        return {
+            name: 'home.main',
+            params: route.params
+        };
     }
 
     function admin(route) {
         var deferred = $q.defer();
 
-        //Catch every state in admin
-        if(route.name.indexOf('admin') === 0) {
-            /*
-             Call the authenticator and store the promise, so we can do that in the ui-router:
-             resolve: {
-                user: function($redirect) {
-                    return $redirect.get('user');
-                }
-             }
-             Note: The service should have a proper caching layer to avoid unnecessary requests
-             */
-            this.set('user', authService.load())
-            //If the user was resolved then check further conditions. In other case deny the change.
-            .then(authenticated, deferred.reject);
-        //In any other case we dont care in this block and approve the change
-        } else {
-            return true;
-        }
+        /*
+         Call the authenticator and store the promise, so we can do that in the ui-router:
+         resolve: {
+            user: function($redirect) {
+                return $redirect.get('user');
+            }
+         }
+         Note: The service should have a proper caching layer to avoid unnecessary requests
+         */
+        this.set('user', authService.load())
+        //If the user was resolved then check further conditions. In other case deny the change.
+        .then(authenticated, deferred.reject);
 
         function authenticated() {
+            deffered.resolve(true);
             //Go to the admin home page
             if(route.name === 'admin') {
                 deffered.resolve({
@@ -99,8 +94,9 @@ Debug the redirections in the console
 
 ## $redirect
 
-## add(callback):
+## add([condition, ]callback):
 The callback will be called recursively
+* condition {regexp}
 * callback(route) {function}
 
 ### callback return:
