@@ -15,7 +15,7 @@
         notFoundCallback = angular.noop,
         debug = false;
 
-    Redirect.$inject = ['$rootScope', '$state', '$q', '$timeout', '$injector'];
+    Redirect.$inject = ['$rootScope', '$state', '$q', '$timeout', '$injector', '$location'];
 
     return {
       otherwise: otherwise,
@@ -49,12 +49,13 @@
       debug = !!_debug;
     }
 
-    function Redirect($rootScope, $state, $q, $timeout, $injector) {
+    function Redirect($rootScope, $state, $q, $timeout, $injector, $location) {
       var callbackQueue = [],
           redirectQueue = [],
           redirectAccepted = false,
           callIndex = 0,
           cache = {},
+          initiated = false,
           redirectScope = {
             add: add,
             _go: go,
@@ -316,7 +317,11 @@
        * @param {object} route
        */
       function _go(route) {
-        var stateFound = $state.get(route.name);
+        var stateFound = $state.get(route.name),
+            currentName = $state.current.name,
+            hash = '',
+            search = $location.search(),
+            _callIndex = callIndex;
 
         reset();
 
@@ -327,7 +332,19 @@
           notFoundCallback($injector);
         } else {
           redirectAccepted = true;
-          $state.go(route.name, route.params, route.options);
+          //First load
+          if(!initiated) {
+            initiated = true;
+            hash = $location.hash();
+          }
+          $state.go(route.name, route.params, route.options).then(function() {
+            if(hash && !currentName) {
+              $location.hash(hash);
+            }
+            if(_callIndex === 1 && Object.keys(search).length) {
+              $location.search(search).replace();
+            }
+          });
           redirectAccepted = false;
         }
       }
